@@ -20,15 +20,13 @@ int main(){
     
 
     gray_img.convertTo(gamma_img, CV_32F);
-    normalize(gamma_img, gamma_img, 0, 1.0, NORM_MINMAX);
+    gamma_img = gamma_img/255.0;
     for(int i = 0; i < gamma_img.rows; i++){
         for(int j = 0; j < gamma_img.cols; j++){
-            float value = gamma_img.at<float>(i, j);
-            gamma_img.at<float>(i, j) = pow(value, 0.5);
+            gamma_img.at<float>(i, j) = pow(gamma_img.at<float>(i, j), 0.5) * 255;
         }
     }
-    normalize(gamma_img, gamma_img, 0, 255, NORM_MINMAX);
-    gamma_img.convertTo(gamma_img, CV_8U); 
+    gamma_img.convertTo(gamma_img, CV_8U);
     gamma_img = gamma_img * 1;
 
     imshow("gray_img", gray_img);
