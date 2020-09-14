@@ -22,7 +22,7 @@ int main(){
         }
         imshow("video", frame);
         cout << "frames: " << cap.get(CAP_PROP_POS_FRAMES) << " / " << cap.get(CAP_PROP_FRAME_COUNT) << endl;
-        waitKey(24);
+        waitKey(1000/cap.get(CAP_PROP_FPS));
     }
 
     double fps = cap.get(CAP_PROP_FPS);
