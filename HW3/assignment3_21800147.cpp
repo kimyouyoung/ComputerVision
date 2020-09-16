@@ -10,21 +10,25 @@ int main(){
     lena = imread("lena.png");
     imshow("lena", lena);
 
+    blur_lena = lena.clone();
     Rect b_rect(0, 0, (int)(lena.cols/2), lena.rows);
-    Rect rect((int)(lena.cols/2), 0, (int)(lena.cols/2), lena.rows);
-    blur(lena, blur_lena, Size(7, 7));
-    hconcat(blur_lena(b_rect), lena(rect), blur_lena);
+    blur(blur_lena(b_rect), blur_lena(b_rect), Size(7, 7));
     imshow("lena_filtered", blur_lena);
 
-    Mat moon, sharp_moon;
+    Mat moon, p_moon, sharp_moon;
 
     moon = imread("moon.png");
     imshow("moon", moon);
 
-    Rect s_rect((int)(moon.cols/2), 0, (int)(moon.cols/2), moon.rows);
-    Rect m_rect(0, 0, (int)(moon.cols/2), moon.rows);
-    Laplacian(moon, sharp_moon, moon.type());
-    // hconcat(moon(m_rect), sharp_moon(s_rect), sharp_moon);
+    Laplacian(moon, sharp_moon, CV_16S); 
+    convertScaleAbs(sharp_moon, sharp_moon); 
+    add(sharp_moon, moon, sharp_moon);
+
+    for(int i = 0; i <= moon.rows; i++){
+        for(int j = 0; j <= moon.cols/2; j++){
+            sharp_moon.at<uchar>(i, j) = moon.at<uchar>(i, j);
+        }
+    }
     imshow("moon_filtered", sharp_moon);
 
 
