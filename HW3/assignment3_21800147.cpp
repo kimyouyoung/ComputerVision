@@ -24,9 +24,11 @@ int main(){
     convertScaleAbs(sharp_moon, sharp_moon); 
     add(sharp_moon, moon, sharp_moon);
 
-    for(int i = 0; i <= moon.rows; i++){
-        for(int j = 0; j <= moon.cols/2; j++){
-            sharp_moon.at<uchar>(i, j) = moon.at<uchar>(i, j);
+    for(int i = 0; i < moon.rows; i++){
+        for(int j = 0; j < moon.cols/2; j++){
+            sharp_moon.at<Vec3b>(i, j)[0] = moon.at<Vec3b>(i, j)[0];
+            sharp_moon.at<Vec3b>(i, j)[1] = moon.at<Vec3b>(i, j)[1];
+            sharp_moon.at<Vec3b>(i, j)[2] = moon.at<Vec3b>(i, j)[2];
         }
     }
     imshow("moon_filtered", sharp_moon);
