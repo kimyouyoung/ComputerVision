@@ -15,23 +15,19 @@ int main(){
     blur(blur_lena(b_rect), blur_lena(b_rect), Size(7, 7));
     imshow("lena_filtered", blur_lena);
 
-    Mat moon, p_moon, sharp_moon;
+    Mat moon, sharp_moon;
 
     moon = imread("moon.png");
     imshow("moon", moon);
 
-    Laplacian(moon, sharp_moon, CV_16S); 
+    Rect s_rect((int)(moon.cols/2), 0, (int)(moon.cols/2), moon.rows);
+    sharp_moon = moon.clone();
+    sharp_moon = sharp_moon(s_rect);
+    Laplacian(sharp_moon, sharp_moon, CV_16S); 
     convertScaleAbs(sharp_moon, sharp_moon); 
-    add(sharp_moon, moon, sharp_moon);
+    add(sharp_moon, moon(s_rect), sharp_moon);
 
-    for(int i = 0; i < moon.rows; i++){
-        for(int j = 0; j < moon.cols/2; j++){
-            sharp_moon.at<Vec3b>(i, j)[0] = moon.at<Vec3b>(i, j)[0];
-            sharp_moon.at<Vec3b>(i, j)[1] = moon.at<Vec3b>(i, j)[1];
-            sharp_moon.at<Vec3b>(i, j)[2] = moon.at<Vec3b>(i, j)[2];
-        }
-    }
-    imshow("moon_filtered", sharp_moon);
+    imshow("moon_filtered", moon);
 
 
     Mat saltnpepper, saltnpepper_filter;
