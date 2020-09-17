@@ -17,17 +17,28 @@ int main(){
 
     Mat moon, sharp_moon;
 
-    moon = imread("moon.png");
+    moon = imread("moon.jpg");
     imshow("moon", moon);
+ 
+    Mat output = Mat::zeros(moon.size(), moon.type());
 
-    Rect s_rect((int)(moon.cols/2), 0, (int)(moon.cols/2), moon.rows);
-    sharp_moon = moon.clone();
-    sharp_moon = sharp_moon(s_rect);
-    Laplacian(sharp_moon, sharp_moon, CV_16S); 
-    convertScaleAbs(sharp_moon, sharp_moon); 
-    add(sharp_moon, moon(s_rect), sharp_moon);
+    for(int i = 0; i < moon.rows; i++){
+        for(int j = 0; j < moon.cols/2; j++){
+            output.at<Vec3b>(i, j) = moon.at<Vec3b>(i, j);
+        }
+    }
 
-    imshow("moon_filtered", moon);
+    Laplacian(moon, sharp_moon, CV_16S);
+    convertScaleAbs(sharp_moon, sharp_moon);
+    add(sharp_moon, moon, sharp_moon);
+
+    for(int i = 0; i < moon.rows; i++){
+        for(int j = moon.cols/2; j < moon.cols; j++){
+            output.at<Vec3b>(i, j) = sharp_moon.at<Vec3b>(i, j);
+        }
+    }
+
+    imshow("moon_filtered", output);
 
 
     Mat saltnpepper, saltnpepper_filter;
