@@ -16,16 +16,7 @@ int main(){
     log(log_img, log_img);
     log_img = 1.5f * log_img;
     normalize(log_img, log_img, 0, 255, NORM_MINMAX);
-    // log_img.convertTo(log_img, CV_8U); 
     convertScaleAbs(log_img, log_img); 
-    
-    // MatIterator_<uchar> it, end;
-    // float gamma = 0.5f;
-    // unsigned char pix[256];
-
-    // for(int i = 0; i < 256; i++){
-    //     pix[i] = (uchar)(pow(float)(i/255.0), gamma)
-    // }
 
     gray_img.convertTo(gamma_img, CV_32F);
     gamma_img = gamma_img/255.0;

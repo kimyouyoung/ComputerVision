@@ -23,8 +23,8 @@ Mat drawHistogram(Mat src){
     normalize(hist, hist, 0, histImage.rows, NORM_MINMAX, -1, Mat());
 
     for(int i = 0; i < histSize; i++){
-
-    rectangle(histImage, Point(bin_w * i, hist_h), Point(bin_w * i+hist_w/histSize, hist_h - cvRound(hist.at<float>(i))), Scalar(0, 0, 0), -1);    }
+        rectangle(histImage, Point(bin_w * i, hist_h), Point(bin_w * i+hist_w/histSize, hist_h - cvRound(hist.at<float>(i))), Scalar(0, 0, 0), -1);   
+    }
 
     return histImage;
 }
