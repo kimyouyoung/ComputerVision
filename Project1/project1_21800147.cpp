@@ -59,10 +59,108 @@ Mat histogram(Mat src){
     return image;
 }
 
+Mat colorSlicing(Mat src){
+    Mat image, dst;
+    Mat channels[3];
+
+    cvtColor(src, image, CV_BGR2HSV);
+    split(image, channels);
+
+    for(int i = 0; i < channels[0].rows; i++){
+        for(int j = 0; j < channels[0].cols; j++){
+            if(channels[0].at<uchar>(i, j) <= 9 || channels[0].at<uchar>(i, j) >= 23)
+                channels[1].at<uchar>(i, j) = 0;
+        }
+    }
+
+    merge(channels, 3, dst);
+    cvtColor(dst, image, CV_HSV2BGR);
+
+    return image;
+}
+
+Mat colorConversion(Mat src){
+    Mat image, dst;
+    Mat channels[3];
+
+    cvtColor(src, image, CV_BGR2HSV);
+    split(image, channels);
+
+    for(int i = 0; i < channels[0].rows; i++){
+        for(int j = 0; j < channels[0].cols; j++){
+
+            if(channels[0].at<uchar>(i, j) > 129)
+                channels[0].at<uchar>(i, j) = channels[0].at<uchar>(i, j) - 129;
+            else
+                channels[0].at<uchar>(i, j)  += 50;
+        }
+    }
+
+    merge(channels, 3, dst);
+    cvtColor(dst, image, CV_HSV2BGR);
+
+    return image;
+}
+
 Mat averageFilter(Mat src){
     Mat image;
+    Mat channels[3];
 
-    blur(src, image, Size(9, 9));
+    cvtColor(src, image, CV_BGR2HSV);
+    split(image, channels);
+    
+    blur(channels[2], channels[2], Size(9, 9));
+
+    erge(channels, 3, dst);
+    cvtColor(dst, image, CV_HSV2BGR);
+
+    return image;
+}
+
+Mat whiteBalancing(Mat src){
+    Mat image;
+    Mat channels[3];
+
+    int b, g, r;
+
+    split(src, channels);
+
+    for(int i = 0; i < channels[0].rows; i++){
+        for(int j = 0; j < channels[0].cols; j++){
+            b += channels[0].at<uchar>(i, j);
+            g += channels[1].at<uchar>(i, j);
+            r += channels[2].at<uchar>(i, j);
+        }
+    }
+
+    cout << b << endl;
+    cout << g << endl;
+    cout << r << endl;
+
+    b = b / (channels[0].rows*channels[0].cols);
+    g = g / (channels[0].rows*channels[0].cols);
+    r = r / (channels[0].rows*channels[0].cols);
+
+    
+
+    int bb, gg, rr;
+    for(int i = 0; i < channels[0].rows; i++){
+        for(int j = 0; j < channels[0].cols; j++){
+            channels[0].at<uchar>(i, j) *= (128 / b);
+            channels[1].at<uchar>(i, j) *= (128 / g);
+            channels[2].at<uchar>(i, j) *= (128 / r);
+
+            bb += channels[0].at<uchar>(i, j);
+            gg += channels[1].at<uchar>(i, j);
+            rr += channels[2].at<uchar>(i, j);
+        }
+    }
+
+    cout << bb / (channels[0].rows*channels[0].cols) << endl;
+    cout << gg / (channels[0].rows*channels[0].cols) << endl;
+    cout << rr / (channels[0].rows*channels[0].cols) << endl;
+
+    merge(channels, 3, image);
 
     return image;
 }
@@ -84,50 +182,49 @@ int main(){
 
     while(1){
 
+        if(ch == 27)
+            break;
+
         switch(ch){
 
             case 'n':{
-                show_lena = negative(lena);
+                show_lena = negative(show_lena);
                 cout << "Negative transformation" << endl;
                 break;
             }
 
             case 'g':{
-                show_lena = gamma(lena);
+                show_lena = gamma(show_lena);
                 cout << "Gamma transformation" << endl;
                 break;
             }
             
             case 'h':{
-                show_lena = histogram(lena);
+                show_lena = histogram(show_lena);
                 cout << "Histogram equalization" << endl;
                 break;
             }
 
             case 's':{
-                Mat slicing;
-                show_colorful = slicing;
+                show_colorful = colorSlicing(show_colorful);
                 cout << "Color slicing" << endl;
                 break;
             }
 
             case 'c':{
-                Mat conversion;
-                cvtColor(colorful, conversion, CV_BGR2YUV);
-                show_colorful = conversion;
+                show_colorful = colorConversion(show_colorful);
                 cout << "Color conversion" << endl;
                 break;
             }
 
             case 'a':{
-                show_balancing = averageFilter(balancing);
+                show_balancing = averageFilter(show_balancing);
                 cout << "Average filtering" << endl;
                 break;
             }
 
             case 'w':{
-                Mat white_b;
-                show_balancing = white_b;
+                show_balancing = whiteBalancing(show_balancing);
                 cout << "White balancing" << endl;
                 break;
             }
