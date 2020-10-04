@@ -13,7 +13,9 @@ Mat negative(Mat src){
    
     for(int i = 0; i < channels[2].rows; i++){
         for(int j = 0; j < channels[2].cols; j++){
-            channels[2].at<uchar>(i, j) = 255 - 1 - channels[2].at<uchar>(i, j);
+            channels[2].at<uchar>(i, j) = 255 - channels[2].at<uchar>(i, j);
+            if(channels[2].at<uchar>(i, j) > 255)
+                channels[2].at<uchar>(i, j) = 255;
         }
     }
 
@@ -30,14 +32,18 @@ Mat gamma(Mat src){
     cvtColor(src, image, CV_BGR2HSV);
     split(image, channels);
 
-    channels[2].convertTo(channels[2], CV_32F);
-    channels[2] = channels[2]/255.0;
-    for(int i = 0; i < channels[2].rows; i++){
-        for(int j = 0; j < channels[2].cols; j++){
-            channels[2].at<float>(i, j) = pow(channels[2].at<float>(i, j), 2.5) * 255;
-        }
+    MatIterator_<uchar> it, end;
+    float gamma = 2.5f;
+    unsigned char pix[256];
+
+    for(int i = 0; i < 256; i++){
+        pix[i] = (uchar)(pow((float)(i / 255.0), gamma) * 255.0f);
     }
-    channels[2].convertTo(channels[2], CV_8U);
+
+    for(it = channels[2].begin<uchar>(), end = channels[2].end<uchar>(); it != end; it++){
+        *it = pix[(*it)];
+    }
+
     merge(channels, 3, dst);
     cvtColor(dst, image, CV_HSV2BGR);
 
@@ -103,15 +109,15 @@ Mat colorConversion(Mat src){
 }
 
 Mat averageFilter(Mat src){
-    Mat image;
+    Mat image, dst;
     Mat channels[3];
 
     cvtColor(src, image, CV_BGR2HSV);
     split(image, channels);
-    
+
     blur(channels[2], channels[2], Size(9, 9));
 
-    erge(channels, 3, dst);
+    merge(channels, 3, dst);
     cvtColor(dst, image, CV_HSV2BGR);
 
     return image;
@@ -121,44 +127,48 @@ Mat whiteBalancing(Mat src){
     Mat image;
     Mat channels[3];
 
-    int b, g, r;
+    int blue = 0;
+    int green = 0;
+    int red = 0;
 
     split(src, channels);
 
+    channels[0].convertTo(channels[0], CV_32F);
+    channels[1].convertTo(channels[1], CV_32F);
+    channels[2].convertTo(channels[2], CV_32F);
+
     for(int i = 0; i < channels[0].rows; i++){
         for(int j = 0; j < channels[0].cols; j++){
-            b += channels[0].at<uchar>(i, j);
-            g += channels[1].at<uchar>(i, j);
-            r += channels[2].at<uchar>(i, j);
+            blue += channels[0].at<float>(i, j);
+            green += channels[1].at<float>(i, j);
+            red += channels[2].at<float>(i, j);
         }
     }
 
-    cout << b << endl;
-    cout << g << endl;
-    cout << r << endl;
+    blue /= (channels[0].rows * channels[0].cols);
+    green /= (channels[1].rows * channels[1].cols);
+    red /= (channels[2].rows * channels[2].cols);
 
-    b = b / (channels[0].rows*channels[0].cols);
-    g = g / (channels[0].rows*channels[0].cols);
-    r = r / (channels[0].rows*channels[0].cols);
-
-    
-
-    int bb, gg, rr;
     for(int i = 0; i < channels[0].rows; i++){
         for(int j = 0; j < channels[0].cols; j++){
-            channels[0].at<uchar>(i, j) *= (128 / b);
-            channels[1].at<uchar>(i, j) *= (128 / g);
-            channels[2].at<uchar>(i, j) *= (128 / r);
+            channels[0].at<float>(i, j) = channels[0].at<float>(i, j) * 128 / blue;
+            channels[1].at<float>(i, j) = channels[1].at<float>(i, j) * 128 / green;
+            channels[2].at<float>(i, j) = channels[2].at<float>(i, j) * 128 / red;
 
-            bb += channels[0].at<uchar>(i, j);
-            gg += channels[1].at<uchar>(i, j);
-            rr += channels[2].at<uchar>(i, j);
+             if(channels[0].at<float>(i, j) > 255){
+                channels[0].at<float>(i, j) = 255;
+             }else if(channels[1].at<float>(i, j) > 255){
+                channels[1].at<float>(i, j) = 255;
+             }else if(channels[2].at<float>(i, j) > 255){
+                channels[2].at<float>(i, j) = 255;
+             }
+
         }
     }
 
-    cout << bb / (channels[0].rows*channels[0].cols) << endl;
-    cout << gg / (channels[0].rows*channels[0].cols) << endl;
-    cout << rr / (channels[0].rows*channels[0].cols) << endl;
+    channels[0].convertTo(channels[0], CV_8U);
+    channels[1].convertTo(channels[1], CV_8U);
+    channels[2].convertTo(channels[2], CV_8U);
 
     merge(channels, 3, image);
 
@@ -181,11 +191,10 @@ int main(){
     show_balancing = balancing;
 
     while(1){
-
         if(ch == 27)
             break;
 
-        switch(ch){
+        switch(tolower(ch)){
 
             case 'n':{
                 show_lena = negative(show_lena);
