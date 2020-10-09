@@ -26,17 +26,14 @@ int main(){
             break;
         }
 
+        cvtColor(frame, frame, CV_BGR2GRAY);
+
+        blur(frame, frame, Size(5, 5));
+
+        Canny(frame, frame, 10, 60, 3);
+
         canny_left = frame(rect_left);
         canny_right = frame(rect_right);
-
-        cvtColor(canny_left, canny_left, CV_BGR2GRAY);
-        cvtColor(canny_right, canny_right, CV_BGR2GRAY);
-
-        blur(canny_left, canny_left, Size(5, 5));
-        blur(canny_right, canny_right, Size(5, 5));
-
-        Canny(canny_left, canny_left, 10, 60, 3);
-        Canny(canny_right, canny_right, 10, 60, 3);
 
         namedWindow("Left canny");
         moveWindow("Left canny", 200, 0);
