@@ -40,6 +40,16 @@ int main(){
 
     imshow("moon_filtered", output);
 
+    /*
+    Unsharp masking
+    Mat input = imread("lena.png");
+    Mat gray, blur, sharp;
+    cvtColor(input, gray, BGR2GRAY);
+    GaussianBlur(input, blur, Size(5, 5), 3);
+    addWeighted(gray, 1.5, blur, -0.5, 0, sharp);
+    imshow("sharp", sharp);
+    **/
+
 
     Mat saltnpepper, saltnpepper_filter;
 

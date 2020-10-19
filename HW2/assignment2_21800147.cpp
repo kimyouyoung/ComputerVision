@@ -9,7 +9,13 @@ int main(){
 
     gray_img = imread("lena.png", 0);
 
-    negative_img = 255-gray_img;
+    // negative_img = 255 - gray_img;
+    negative_img = gray_img.clone();
+    for(int i = 0; i < negative_img.rows; i++){
+        for(int j = 0; j < negative_img.cols; j++){
+            negative_img.at<uchar>(i, j) = 255 - negative_img.at<uchar>(i, j);
+        }
+    }
 
     gray_img.convertTo(log_img,CV_32F);
     log_img = abs(log_img) + 1;
@@ -32,7 +38,9 @@ int main(){
     float gamma = 0.5f;
     unsigned char pix[256];
 
+    // lookup table을 만드는 것과 같다.
     for(int i = 0; i < 256; i++){
+        // i / 255.0 = 0-1 사이 값으로 만들어 준 후 gamma를 pow하고 * 255를 한다.
         pix[i] = (uchar)(pow((float)(i / 255.0), gamma) * 255.0f);
     }
 
