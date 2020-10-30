@@ -11,9 +11,9 @@ int main(){
     adaptive_1 = imread("adaptive_1.jpg", 0);
     adaptive = imread("adaptive.png", 0);
 
-    threshold(finger, finger, 165, 255, THRESH_BINARY);
+    threshold(finger, finger, 0, 255, THRESH_BINARY | THRESH_OTSU);
 
-    adaptiveThreshold(adaptive_1, adaptive_1, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 7, 10);
+    adaptiveThreshold(adaptive_1, adaptive_1, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 19, 10);
     
     adaptiveThreshold(adaptive, adaptive, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 7, 10);
     
