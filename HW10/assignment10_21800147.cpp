@@ -53,9 +53,7 @@ int main(){
 
         waitKey(1000/cap.get(CAP_PROP_FPS));
     }
-
-    imshow("frame", frame);
-
+    
     waitKey(0);
     return 0;
 }
