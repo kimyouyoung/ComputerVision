@@ -21,9 +21,9 @@ int main(){
     avg = Mat(frame_gray.rows, frame_gray.cols, CV_8UC1, Scalar(0));
     add(frame_gray / num_frame_avg, avg, avg);
    
-    Rect rect(0, 0, frame.cols - 100, frame.rows);
-    Rect rect2(frame.cols - 100, 0, 100, frame.rows / 2);
-    Rect rect3(frame.cols - 100, frame.rows / 2, 100, frame.rows / 2);
+   Rect rect(0, 0, frame.cols - 100, frame.rows);
+   Rect rect2(frame.cols - 100, 0, 100, frame.rows / 2);
+   Rect rect3(frame.cols - 100, frame.rows / 2, 100, frame.rows / 2);
 
     while(1){
         cap >> frame;
